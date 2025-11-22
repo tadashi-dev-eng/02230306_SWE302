@@ -1,0 +1,265 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>crud-testing: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">crud-testing/handlers.go (45.0%)</option>
+				
+				<option value="file1">crud-testing/main.go (0.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">// handlers.go
+package main
+
+import (
+        "encoding/json"
+        "net/http"
+        "strconv"
+        "sync"
+
+        "github.com/go-chi/chi/v5"
+)
+
+// User defines the structure for a user.
+type User struct {
+        ID   int    `json:"id"`
+        Name string `json:"name"`
+}
+
+// In-memory "database"
+var (
+        users  = make(map[int]User)
+        nextID = 1
+        mu     sync.Mutex // To safely handle concurrent requests
+)
+
+// --- HANDLERS ---
+
+// getAllUsersHandler handles GET /users
+func getAllUsersHandler(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        mu.Lock()
+        defer mu.Unlock()
+
+        var userList []User
+        for _, user := range users </span><span class="cov0" title="0">{
+                userList = append(userList, user)
+        }</span>
+
+        <span class="cov0" title="0">w.Header().Set("Content-Type", "application/json")
+        json.NewEncoder(w).Encode(userList)</span>
+}
+
+// createUserHandler handles POST /users
+func createUserHandler(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        var user User
+        if err := json.NewDecoder(r.Body).Decode(&amp;user); err != nil </span><span class="cov0" title="0">{
+                http.Error(w, err.Error(), http.StatusBadRequest)
+                return
+        }</span>
+
+        <span class="cov8" title="1">mu.Lock()
+        defer mu.Unlock()
+
+        user.ID = nextID
+        nextID++
+        users[user.ID] = user
+
+        w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(http.StatusCreated)
+        json.NewEncoder(w).Encode(user)</span>
+}
+
+// getUserHandler handles GET /users/{id}
+func getUserHandler(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        id, err := strconv.Atoi(chi.URLParam(r, "id"))
+        if err != nil </span><span class="cov0" title="0">{
+                http.Error(w, "Invalid user ID", http.StatusBadRequest)
+                return
+        }</span>
+
+        <span class="cov8" title="1">mu.Lock()
+        defer mu.Unlock()
+
+        user, ok := users[id]
+        if !ok </span><span class="cov8" title="1">{
+                http.Error(w, "User not found", http.StatusNotFound)
+                return
+        }</span>
+
+        <span class="cov8" title="1">w.Header().Set("Content-Type", "application/json")
+        json.NewEncoder(w).Encode(user)</span>
+}
+
+// updateUserHandler handles PUT /users/{id}
+func updateUserHandler(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        id, err := strconv.Atoi(chi.URLParam(r, "id"))
+        if err != nil </span><span class="cov0" title="0">{
+                http.Error(w, "Invalid user ID", http.StatusBadRequest)
+                return
+        }</span>
+
+        <span class="cov0" title="0">var updatedUser User
+        if err := json.NewDecoder(r.Body).Decode(&amp;updatedUser); err != nil </span><span class="cov0" title="0">{
+                http.Error(w, err.Error(), http.StatusBadRequest)
+                return
+        }</span>
+
+        <span class="cov0" title="0">mu.Lock()
+        defer mu.Unlock()
+
+        _, ok := users[id]
+        if !ok </span><span class="cov0" title="0">{
+                http.Error(w, "User not found", http.StatusNotFound)
+                return
+        }</span>
+
+        <span class="cov0" title="0">updatedUser.ID = id
+        users[id] = updatedUser
+
+        w.Header().Set("Content-Type", "application/json")
+        json.NewEncoder(w).Encode(updatedUser)</span>
+}
+
+// deleteUserHandler handles DELETE /users/{id}
+func deleteUserHandler(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        id, err := strconv.Atoi(chi.URLParam(r, "id"))
+        if err != nil </span><span class="cov0" title="0">{
+                http.Error(w, "Invalid user ID", http.StatusBadRequest)
+                return
+        }</span>
+
+        <span class="cov8" title="1">mu.Lock()
+        defer mu.Unlock()
+
+        if _, ok := users[id]; !ok </span><span class="cov0" title="0">{
+                http.Error(w, "User not found", http.StatusNotFound)
+                return
+        }</span>
+
+        <span class="cov8" title="1">delete(users, id)
+        w.WriteHeader(http.StatusNoContent)</span>
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">// main.go
+package main
+
+import (
+        "log"
+        "net/http"
+
+        "github.com/go-chi/chi/v5"
+        "github.com/go-chi/chi/v5/middleware"
+)
+
+func main() <span class="cov0" title="0">{
+        r := chi.NewRouter()
+        r.Use(middleware.Logger)
+
+        // Setup routes
+        r.Get("/users", getAllUsersHandler)
+        r.Post("/users", createUserHandler)
+        r.Get("/users/{id}", getUserHandler)
+        r.Put("/users/{id}", updateUserHandler)
+        r.Delete("/users/{id}", deleteUserHandler)
+
+        log.Println("Server starting on :3000")
+        if err := http.ListenAndServe(":3000", r); err != nil </span><span class="cov0" title="0">{
+                log.Fatalf("Could not start server: %s\n", err)
+        }</span>
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>

@@ -1,0 +1,26 @@
+mode: set
+crud-testing/handlers.go:29.65,34.29 4 1
+crud-testing/handlers.go:34.29,36.3 1 1
+crud-testing/handlers.go:38.2,39.37 2 1
+crud-testing/handlers.go:43.64,45.62 2 1
+crud-testing/handlers.go:45.62,48.3 2 1
+crud-testing/handlers.go:50.2,59.33 8 1
+crud-testing/handlers.go:63.61,65.16 2 1
+crud-testing/handlers.go:65.16,68.3 2 1
+crud-testing/handlers.go:70.2,74.9 4 1
+crud-testing/handlers.go:74.9,77.3 2 1
+crud-testing/handlers.go:79.2,80.33 2 1
+crud-testing/handlers.go:84.64,86.16 2 1
+crud-testing/handlers.go:86.16,89.3 2 1
+crud-testing/handlers.go:91.2,92.69 2 1
+crud-testing/handlers.go:92.69,95.3 2 1
+crud-testing/handlers.go:97.2,101.9 4 1
+crud-testing/handlers.go:101.9,104.3 2 1
+crud-testing/handlers.go:106.2,110.40 4 1
+crud-testing/handlers.go:114.64,116.16 2 1
+crud-testing/handlers.go:116.16,119.3 2 1
+crud-testing/handlers.go:121.2,124.29 3 1
+crud-testing/handlers.go:124.29,127.3 2 1
+crud-testing/handlers.go:129.2,130.37 2 1
+crud-testing/main.go:12.13,24.56 9 0
+crud-testing/main.go:24.56,26.3 1 0

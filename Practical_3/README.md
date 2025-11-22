@@ -186,6 +186,7 @@ This prevents false failures due to precision issues.
 ![image](./assets/Screenshot%20From%202025-11-21%2012-30-05.png)
 
 ![image](./assets/Screenshot%20From%202025-11-21%2012-30-29.png)
+
 Test output summary:
 - P1 (Invalid weight - too small): 2 tests, 2 pass
 - P2 (Standard tier): 3 tests, 3 pass
